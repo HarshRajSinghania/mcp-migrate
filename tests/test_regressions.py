@@ -31,6 +31,7 @@ from mcp_migrate.rules.r010_server_discover_missing import (
     _has_request_handlers,
 )
 from mcp_migrate.rules.r011_ping_removed import PingRemoved
+from mcp_migrate.rules.r013_subscriptions_replaced import ResourceSubscriptionsReplaced
 from mcp_migrate.rules.r017_resource_not_found_code_changed import (
     ResourceNotFoundCodeChanged,
 )
@@ -1336,3 +1337,58 @@ def test_sdk_roots_import_still_fires_r018(tmp_path):
         "app = Server('demo')\n"
     )
     assert "R018" in _findings_by_rule(tmp_path)
+
+
+# --- R013 SDK registration shapes (#310) ----------------------------------
+
+def test_r013_fires_on_sdk_decorator_and_constructor(tmp_path):
+    (tmp_path / "server.py").write_text(
+        "from mcp.server import Server
+"
+        "app = Server('demo')
+"
+        "
+"
+        "@app.subscribe_resource()
+"
+        "async def subscribe(uri):
+"
+        "    return None
+"
+        "
+"
+        "@app.unsubscribe_resource()
+"
+        "async def unsubscribe(uri):
+"
+        "    return None
+"
+        "
+"
+        "server = Server('demo', on_subscribe_resource=subscribe,
+"
+        "                on_unsubscribe_resource=unsubscribe)
+"
+    )
+    findings = ResourceSubscriptionsReplaced().check(load_project(tmp_path))
+    snippets = [f.snippet for f in findings]
+    assert any("subscribe_resource()" in (s or "") for s in snippets)
+    assert any("unsubscribe_resource()" in (s or "") for s in snippets)
+    assert any("on_subscribe_resource=" in (s or "") for s in snippets)
+    assert any("on_unsubscribe_resource=" in (s or "") for s in snippets)
+    assert all(f.rule_id == "R013" for f in findings)
+
+
+def test_r013_ignores_sdk_names_in_docstring_and_comment(tmp_path):
+    (tmp_path / "server.py").write_text(
+        '"""Registers via @app.subscribe_resource() and on_subscribe_resource=."""
+'
+        "# on_unsubscribe_resource= is mentioned only here
+"
+        "def health():
+"
+        "    return 'ok'
+"
+    )
+    findings = ResourceSubscriptionsReplaced().check(load_project(tmp_path))
+    assert findings == []
