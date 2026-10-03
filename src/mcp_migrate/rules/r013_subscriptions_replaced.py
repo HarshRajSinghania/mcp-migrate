@@ -1,7 +1,6 @@
 import re
 
-from .base import Finding, Project, Rule
-from .server_call_keywords import server_call_keywords
+from .base import Finding, Project, Rule, server_call_keywords
 
 # `SubscribeRequest`/`UnsubscribeRequest` are the MCP SDK's own model names
 # -- distinctive, no false-positive risk.
@@ -71,6 +70,10 @@ class ResourceSubscriptionsReplaced(Rule):
             SDK_CONSTRUCTOR_KW_RX,
         ):
             out.append(self.finding(MESSAGE_SDK, f, line, text))
+        # resources/subscribe and resources/unsubscribe are JSON-RPC method
+        # strings, not valid bare identifiers -- they can only appear
+        # inside a STRING token, so search_code would never find them (see
+        # the notifications/initialized note in r009). Scan raw text.
         for f, line, text in project.search_wire(WIRE_RX):
             out.append(self.finding(MESSAGE_WIRE, f, line, text))
         return out
@@ -83,6 +86,9 @@ class ResourceSubscriptionsReplaced(Rule):
             (WIRE_RX, MESSAGE_WIRE, project.search_wire),
         ):
             for f, line, text in search(pattern):
+                # A dispatcher line can carry both signals at once, e.g.
+                # `case "resources/subscribe": return this.subscribe(SubscribeRequestSchema);`
+                # -- that's one removed-method usage, not two.
                 if (str(f.path), line) in seen:
                     continue
                 seen.add((str(f.path), line))
