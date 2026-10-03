@@ -1,6 +1,6 @@
 import re
 
-from .base import Finding, Project, Rule
+from .base import Finding, Project, Rule, server_call_keywords
 
 # `SubscribeRequest`/`UnsubscribeRequest` are the MCP SDK's own model names
 # -- distinctive, no false-positive risk.
@@ -14,9 +14,10 @@ SUBSCRIBE_CODE_RX = re.compile(r"\bSubscribeRequest\b|\bUnsubscribeRequest\b")
 SDK_DECORATOR_RX = re.compile(
     r"@[\w.]*\.(?:subscribe_resource|unsubscribe_resource)\s*\("
 )
-SDK_CONSTRUCTOR_START_RX = re.compile(r"\b(?:Server|MCPServer)\s*\(")
-SDK_CONSTRUCTOR_KW_RX = re.compile(
-    r"\bon_(?:subscribe_resource|unsubscribe_resource)\s*="
+# One-line fallback for files that do not parse. Multi-line and black-formatted
+# Server(...) calls are handled by server_call_keywords (#314).
+SDK_CONSTRUCTOR_KW_RX = (
+    r"\b(?:Server|MCPServer)\s*\([^)]*\bon_(?:subscribe_resource|unsubscribe_resource)\s*="
 )
 
 # The TypeScript SDK exports Zod schemas for request handling, and that's
@@ -63,7 +64,12 @@ class ResourceSubscriptionsReplaced(Rule):
             out.append(self.finding(MESSAGE_CODE, f, line, text))
         for f, line, text in project.search_code(SDK_DECORATOR_RX.pattern):
             out.append(self.finding(MESSAGE_SDK, f, line, text))
-        out.extend(_constructor_kw_findings(self, project))
+        for f, line, text in server_call_keywords(
+            project,
+            ("on_subscribe_resource", "on_unsubscribe_resource"),
+            SDK_CONSTRUCTOR_KW_RX,
+        ):
+            out.append(self.finding(MESSAGE_SDK, f, line, text))
         # resources/subscribe and resources/unsubscribe are JSON-RPC method
         # strings, not valid bare identifiers -- they can only appear
         # inside a STRING token, so search_code would never find them (see
@@ -88,44 +94,3 @@ class ResourceSubscriptionsReplaced(Rule):
                 seen.add((str(f.path), line))
                 out.append(self.finding(message, f, line, text))
         return sorted(out, key=lambda x: (str(x.path or ""), x.line or 0))
-
-
-def _constructor_kw_findings(rule: Rule, project: Project) -> list[Finding]:
-    """Flag on_subscribe_resource=/on_unsubscribe_resource= inside a Server() call.
-
-    The kwarg is often on the next line (`Server("demo", on_subscribe_resource=fn,`
-    then `on_unsubscribe_resource=fn)`). A single-line `[^)]*` pattern misses that.
-    Only kwargs that search_code would keep are reported, so a docstring mention
-    of the name does not fire.
-    """
-    code_lines = {
-        (str(f.path), line)
-        for f, line, _text in project.search_code(
-            r"subscribe_resource|unsubscribe_resource"
-        )
-    }
-    out: list[Finding] = []
-    for f in project.files:
-        lines = f.lines
-        i = 0
-        while i < len(lines):
-            if (str(f.path), i + 1) not in code_lines or not SDK_CONSTRUCTOR_START_RX.search(lines[i]):
-                i += 1
-                continue
-            depth = 0
-            end = i
-            started = False
-            while end < len(lines) and end - i < 25:
-                depth += lines[end].count("(") - lines[end].count(")")
-                started = True
-                if started and depth <= 0:
-                    break
-                end += 1
-            end = min(end, len(lines) - 1)
-            for j in range(i, end + 1):
-                if (str(f.path), j + 1) not in code_lines:
-                    continue
-                if SDK_CONSTRUCTOR_KW_RX.search(lines[j]):
-                    out.append(rule.finding(MESSAGE_SDK, f, j + 1, lines[j].strip()))
-            i = end + 1
-    return out
