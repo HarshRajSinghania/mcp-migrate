@@ -14,65 +14,137 @@ SUSPECT = (
 )
 
 TS_SUSPECT_NAMES = (
-    r"sessions|sessionStore|session_store|__sessions|connections|sessionState|session_state|"
-    rSESSIONS|clientState|client_state|perSession|per_session"
+    r"sessions|sessionStore|session_store|_sessions|connections|sessionState|session_state|"
+    r"SESSIONS|clientState|client_state|perSession|per_session"
 )
 
 # TypeScript pattern: declarations of suspect connection state stores
 # (e.g. `const sessions = new Map()`, `const sessionStore = {}`, `let connections: Map<string, State> = new Map()`)
 TS_RX = (
-    rf(\b(?:const|let|var)\s+(?:{TS_SUSPECT_NAMES})\b"
-    r\s*(?:\s*[=]+)?\s*=\s*(?:new\c(SX_Ù]Øš™XÝ
-_ÊH‚ŠB‚ˆÈ\ÜÚYÛ›Y[È[œÚYH\ÙHØÛÜ\È\™H™\]Y\Ý[ØØ[›ÝÚ\™Y›ØÙ\ÜÂ›ÈÝ]KÛÈ^HÚÝ[‰ÝÛÝ[\Èœ\‹XÛÛ›™XÝ[ÛˆÝ]Hˆ]™[ˆYˆBˆÈ˜\šXX›H\[œÈÈÚ\™HHÝ\ÜXÝ˜[YK‚”ÐÓÔWÐ“ÕS‘T–HH
-\Ý‘[˜Ý[Û‘Y‹\Ý\Þ[˜Ñ[˜Ý[Û‘Y‹\Ý“[X™JB‚—ÑPÕÐÐSÓSQTÈHÈ™XÝ‹™Y˜][XÝ‹“Ü™\™YXÝŸB‚‚™YˆÚ\×ÙXÝÜÚ\J›ÙNˆ\ÝTÕ›Û™JHOˆ›ÛÛ‚ˆˆˆ”™]\›ˆYHYˆH›ÙH™\™\Ù[ÈHXÝ[ZÙHÝÜ™K‚‚ˆ™XÛÙÛš\Ù\ÈXÝ]\˜[ËXÝÛÛ\™Z[œÚ[ÛœË[™ÛÛœÝXÝÜˆØ[ÂˆÈXÝÈY˜][XÝÈÜ™\™YXÝ
-[˜ÛY[™ÈHÛÛXÝ[ÛœËž›Ü›JK‚ˆˆˆ‚ˆYˆ›ÙH\È›Û™N‚ˆ™]\›ˆ˜[ÙBˆYˆ\Ú[œÝ[˜ÙJ›ÙK
-\Ý‘XÝ\Ý‘XÝÛÛ\
-JN‚ˆ™]\›ˆYBˆYˆ\Ú[œÝ[˜ÙJ›ÙK\ÝØ[
-N‚ˆ[˜ÈH›ÙK™[˜ÂˆYˆ\Ú[œÝ[˜ÙJ[˜Ë\Ý“˜[YJH[™[˜ËšY[ˆÑPÕÐÐSÓSQTÎ‚ˆ™]\›ˆYBˆYˆ
-ˆ\Ú[œÝ[˜ÙJ[˜Ë\Ý]šX]JBˆ[™[˜Ë˜]ˆ[ˆÑPÕÐÐSÓSQTÂˆ[™\Ú[œÝ[˜ÙJ[˜Ë˜[YK\Ý“˜[YJBˆ[™[˜Ë˜[YKšYOH˜ÛÛXÝ[ÛœÈ‚ˆ
-N‚ˆ™]\›ˆYBˆ™]\›ˆ˜[ÙB‚‚™YˆÛ[Ù[WØ[™ØÛ\Ü×Û]™[Ø\ÜÚYÛœÊ›ÙNˆ\ÝTÕ
-N‚ˆˆˆ–ZY[\ÜÚYÛ‹Ð[›\ÜÚYÛˆ›Ù\ÈXÛ\™Y][Ù[HÜˆÛ\ÜÈØÛÜK‚‚ˆØ[ÜÈH™YHZÙH\ÝØ[Ë]ÝÜÈ\ØÙ[™[™ÈÛ˜ÙH][\œÈBˆ[˜Ý[Û‹Û[X™H›ÙHKHHXÝZ[[™›ÝÛˆ]Ø^H[œÚYHH™\]Y\Ýˆ[™\ˆ\È›Ýœ›ØÙ\ÜË]ÚYHÝ]H[™]ÙY[ˆÛÛ›™XÝ[ÛœÈ‹]\Ýˆ\[œÈÈ™H˜[YYÙ\ÜÚ[ÛœØ‚ˆˆˆ‚ˆ›ÜˆÚ[[ˆ\Ýš]\—ØÚ[Û›Ù\Ê›ÙJN‚ˆYˆ\Ú[œÝ[˜ÙJÚ[
-\Ý\ÜÚYÛ‹\Ý[›\ÜÚYÛŠJN‚ˆZY[Ú[ˆYˆ\Ú[œÝ[˜ÙJÚ[ÐÓÔWÐ“ÕS‘T–JN‚ˆÛÛ[YBˆZY[œ›ÛHÛ[Ù[WØ[™ØÛ\Ü×Û]™[Ø\ÜÚYÛœÊÚ[
-B‚‚˜Û\ÜÈ\ÛÛ›™XÝ[Û”Ý]J[JN‚ˆYH”Œˆ‚ˆ]HH’ÙY\È\‹XÛÛ›™XÝ[ÛˆÝ]H[ˆH[Ù[K[]™[XÝ‚ˆÙ]™\š]HH˜œ™XZÚ[™È‚ˆÜX×Ü™YˆH”ÑTLMÈÎ‹ËÙÚ]X‹˜ÛÛKÛ[Ù[ÛÛ^›ÝØÛÛÛ[Ù[ÛÛ^›ÝØÛÛÜ[ÌMÈ‚ˆš^H
-ˆHÝ][\ÜÈÙ\™\ˆØ[ˆÚ]™Z[™H›Ý[™\›Øš[ˆØY˜[[˜Ù\‹ˆ[Ý™H\È‚ˆš[ÈHÝÜ™HÙ^YYžH[ˆ^XÚ][™H[ÝH™]\›ˆÈHÛY[ˆ‚ˆ
-Bˆ[™ÝXYÙ\ÈH
-œ]Ûˆ‹\\ØÜš\ŠB‚ˆQTÔÐQÑHH“ÛÚÜÈZÙH\‹XÛÛ›™XÝ[ÛˆÝ]H[[ˆ›ØÙ\ÜÈY[[ÜžKˆ‚‚ˆ›Ý[™\šY\ÈH
-ˆš\™\ÊˆÛš\]HœÙ\ÜÚ[ÛœÈHXÝ
+    rf"\b(?:const|let|var)\s+(?:{TS_SUSPECT_NAMES})\b"
+    r"\s*(?::\s*[^=]+)?\s*=\s*(?:new\s+(?:Map|Set|Object)|\{)"
+)
 
-H‹ˆ™X\ÛÛH™XÝ
+# Assignments inside these scopes are request-local, not shared process
+# state, so they shouldn't count as "per-connection state" even if a
+# variable happens to share a suspect name.
+SCOPE_BOUNDARY = (ast.FunctionDef, ast.AsyncFunctionDef, ast.Lambda)
 
-HÛÛœÝXÝÜˆ][Ù[HØÛÜH\ÈHXÝ\Ú\YÝÜ™Kˆ‹ˆ
-Kˆš\™\ÊˆÛš\]H™œ›ÛHÛÛXÝ[ÛœÈ[\ÜY˜][XÝœÙ\ÜÚ[ÛœÈHY˜][XÝ
-XÝ
-H‹ˆ™X\ÛÛH™Y˜][XÝ
+_DICT_CALL_NAMES = {"dict", "defaultdict", "OrderedDict"}
 
-HÛÛœÝXÝÜˆ][Ù[HØÛÜH\ÈHXÝ\Ú\YÝÜ™Kˆ‹ˆ
-Kˆš\™\ÊˆÛš\]H™œ›ÛHÛÛXÝ[ÛœÈ[\ÜÜ™\™YXÝœÙ\ÜÚ[ÛœÈHÜ™\™YXÝ
 
-H‹ˆ™X\ÛÛH“Ü™\™YXÝ
+def _is_dict_shape(node: ast.AST | None) -> bool:
+    """Return True if the node represents a dict-like store.
 
-HÛÛœÝXÝÜˆ][Ù[HØÛÜH\ÈHXÝ\Ú\YÝÜ™Kˆ‹ˆ
-Kˆš\™\ÊˆÛš\]Hš[\ÜÛÛXÝ[Ûœ×œÙ\ÜÚ[ÛœÈHÛÛXÝ[ÛœË™Y˜][XÝ
-XÝ
-H‹ˆ™X\ÛÛH˜ÛÛXÝ[ÛœË™Y˜][XÝ
+    Recognises dict literals, dict comprehensions, and constructor calls
+    to dict / defaultdict / OrderedDict (including the collections.xxx form).
+    """
+    if node is None:
+        return False
+    if isinstance(node, (ast.Dict, ast.DictComp)):
+        return True
+    if isinstance(node, ast.Call):
+        func = node.func
+        if isinstance(func, ast.Name) and func.id in _DICT_CALL_NAMES:
+            return True
+        if (
+            isinstance(func, ast.Attribute)
+            and func.attr in _DICT_CALL_NAMES
+            and isinstance(func.value, ast.Name)
+            and func.value.id == "collections"
+        ):
+            return True
+    return False
 
-H][Ù[HØÛÜH\ÈHXÝ\Ú\YÝÜ™Kˆ‹ˆ
-KˆÚ[[
-ˆÛš\]H™Yˆ[™\Š
-N—ˆÙ\ÜÚ[ÛœÈHY˜][XÝ
-XÝ
-H‹ˆ™X\ÛÛHHXÝ\Ú\YÝÜ™HZ[[œÚYHH[˜Ý[Ûˆ\È™\]Y\Ý[ØØ[›Ý›ØÙ\ÜË]ÚYHÝ]Kˆ‹ˆ
-KˆÚ[[
-ˆÛš\]HœÙ\ÜÚ[ÛœÈH×H‹ˆ™X\ÛÛHH\Ý\È›ÝHXÝ\Ú\YÝÜ™Kˆ‹ˆ
-Kˆ
-B‚ˆYˆÚXÚÊÙ[‹›Ú™XÝˆ›Ú™XÝ
-HOˆ\ÝÑš[™[™×N‚ˆYˆ›Ú™XÝ›[™ÝXYÙHOH\\ØÜš\Ž‚ˆ™]\›ˆÂˆÙ[‹™š[™[™ÊÙ[‹“QTÔÐQÑK‹[™K^
-Bˆ›Üˆ‹[™K^[ˆ›Ú™XÝœÙX\˜ÚØÛÙJ×Ô–
-BˆB‚ˆÝ]ˆ\ÝÑš[™[™×HH×Bˆ›Üˆˆ[ˆ›Ú™XÝ™š[\Î‚ˆYˆ‹™YH\È›Û™N‚ˆÛÛ[YBˆ›Üˆ›ÙH[ˆÛ[Ù[WØ[™ØÛ\Ü×Û]™[Ø\ÜÚYÛœÊ‹™YJN‚ˆÈÙ\ÜÚ[ÛœÎˆXÝÜÝ‹Ý]WHHßX
-[›\ÜÚYÛŠH\ÈHÚ[™ÛBˆÈ\™Ù]›ÝH\™Ù]Ø\ÝZÙHZ[ˆ\ÜÚYÛ‹‚ˆYˆ\Ú[œÝ[˜ÙJ›ÙK\Ý[›\ÜÚYÛŠN‚ˆYˆ›ÝÚ\×ÙXÝÜÚ\J›ÙK˜[YJN‚ˆÛÛ[YBˆ\™Ù]ÈHÛ›ÙK\™Ù]Bˆ[ÙN‚ˆYˆ›ÝÚ\×ÙXÝÜÚ\J›ÙK˜[YJN‚ˆÛÛ[YBˆ\™Ù]ÈH›ÙK\™Ù]Âˆ›Üˆ\™Ù][ˆ\™Ù]Î‚ˆYˆ\Ú[œÝ[˜ÙJ\™Ù]\Ý“˜[YJH[™[žJÈ[ˆ\™Ù]šY›ÜˆÊÈ[ˆÕTÔPÕ
-N‚ˆÝ]˜\[™
-ˆÙ[‹™š[™[™Êˆ˜˜ÞÝ\™Ù]šYXÛÚÜÈZÙH\‹XÛÛ›™XÝ[ÛˆÝ]H[[ˆ›ØÙ\ÜÈY[[ÜžKˆ‹ˆ‹ˆ›ÙK›[™[›Ëˆ‹›[™\ÖÛ›ÙK›[™[›ÈHWKœÝš\
 
-BˆYˆ›ÙK›[™[›ÈH[Š‹›[™\ÊBˆ[ÙH›Û™Kˆ
-Bˆ
-Bˆ™]\›ˆÝ]
+def _module_and_class_level_assigns(node: ast.AST):
+    """Yield Assign/AnnAssign nodes declared at module or class scope.
+
+    Walks the tree like ast.walk, but stops descending once it enters a
+    function/lambda body -- a dict built and thrown away inside a request
+    handler is not "process-wide state held between connections", it just
+    happens to be named `sessions`.
+    """
+    for child in ast.iter_child_nodes(node):
+        if isinstance(child, (ast.Assign, ast.AnnAssign)):
+            yield child
+        if isinstance(child, SCOPE_BOUNDARY):
+            continue
+        yield from _module_and_class_level_assigns(child)
+
+
+class PerConnectionState(Rule):
+    id = "R002"
+    title = "Keeps per-connection state in a module-level dict"
+    severity = "breaking"
+    spec_ref = "SEP-2567 https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2567"
+    fix = (
+        "A stateless server can sit behind a round-robin load balancer. Move this "
+        "into a store keyed by an explicit handle you return to the client."
+    )
+    languages = ("python", "typescript")
+
+    MESSAGE = "Looks like per-connection state held in process memory."
+
+    boundaries = (
+        Fires(
+            snippet="sessions = dict()",
+            reason="dict() constructor at module scope is a dict-shaped store.",
+        ),
+        Fires(
+            snippet="from collections import defaultdict\nsessions = defaultdict(dict)",
+            reason="defaultdict() constructor at module scope is a dict-shaped store.",
+        ),
+        Fires(
+            snippet="from collections import OrderedDict\nsessions = OrderedDict()",
+            reason="OrderedDict() constructor at module scope is a dict-shaped store.",
+        ),
+        Fires(
+            snippet="import collections\nsessions = collections.defaultdict(dict)",
+            reason="collections.defaultdict() at module scope is a dict-shaped store.",
+        ),
+        Silent(
+            snippet="def handler():\n    sessions = defaultdict(dict)",
+            reason="A dict-shaped store built inside a function is request-local, not process-wide state.",
+        ),
+        Silent(
+            snippet="sessions = []",
+            reason="A list is not a dict-shaped store.",
+        ),
+    )
+
+    def check(self, project: Project) -> list[Finding]:
+        if project.language == "typescript":
+            return [
+                self.finding(self.MESSAGE, f, line, text)
+                for f, line, text in project.search_code(TS_RX)
+            ]
+
+        out: list[Finding] = []
+        for f in project.files:
+            if f.tree is None:
+                continue
+            for node in _module_and_class_level_assigns(f.tree):
+                # `sessions: dict[str, State] = {}` (AnnAssign) has a single
+                # `target`, not a `targets` list like plain Assign.
+                if isinstance(node, ast.AnnAssign):
+                    if not _is_dict_shape(node.value):
+                        continue
+                    targets = [node.target]
+                else:
+                    if not _is_dict_shape(node.value):
+                        continue
+                    targets = node.targets
+                for target in targets:
+                    if isinstance(target, ast.Name) and any(s in target.id for s in SUSPECT):
+                        out.append(
+                            self.finding(
+                                f"`{target.id}` looks like per-connection state held in process memory.",
+                                f,
+                                node.lineno,
+                                f.lines[node.lineno - 1].strip()
+                                if node.lineno <= len(f.lines)
+                                else None,
+                            )
+                        )
+        return out
